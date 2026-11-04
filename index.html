@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>时间加法计算器</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: system-ui, sans-serif;
+        }
+        body {
+            max-width: 480px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+        .item {
+            margin: 16px 0;
+        }
+        label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: 500;
+        }
+        input {
+            width: 100%;
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+        }
+        button {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            background: #2563eb;
+            color: white;
+            font-size: 16px;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+        button:hover {
+            background: #1d4ed8;
+        }
+        .result {
+            margin-top: 20px;
+            padding: 14px;
+            background: #f0f7ff;
+            border-radius: 6px;
+            font-size: 18px;
+        }
+    </style>
+</head>
+<body>
+    <h2>时间计算器（加分钟）</h2>
+    <div class="item">
+        <label>起始时间</label>
+        <input type="time" id="startTime" value="08:00">
+    </div>
+    <div class="item">
+        <label>增加分钟数</label>
+        <input type="number" id="addMinute" placeholder="例如：90" value="60">
+    </div>
+    <button onclick="calcTime()">计算结束时间</button>
+    <div class="result" id="result"></div>
+
+    <script>
+        function calcTime() {
+            const timeStr = document.getElementById('startTime').value;
+            const addMin = Number(document.getElementById('addMinute').value);
+            if (!timeStr || isNaN(addMin)) {
+                document.getElementById('result').innerText = "请输入正确的时间和分钟";
+                return;
+            }
+            const [h, m] = timeStr.split(':').map(Number);
+            let total = h * 60 + m + addMin;
+            // 超过24小时自动取模
+            total = total % (24 * 60);
+            const endH = Math.floor(total / 60);
+            const endM = total % 60;
+            const fmt = (n) => String(n).padStart(2, '0');
+            const endTime = `${fmt(endH)}:${fmt(endM)}`;
+            document.getElementById('result').innerText = `结束时间：${endTime}`;
+        }
+    </script>
+</body>
+</html>
