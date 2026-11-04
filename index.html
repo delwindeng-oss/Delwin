@@ -2,7 +2,7 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>时间加法计算器</title>
     <style>
         * {
@@ -13,6 +13,7 @@
             max-width: 480px;
             margin: 40px auto;
             padding: 0 20px;
+            background:#ffffff;
         }
         .item {
             margin: 16px 0;
@@ -39,7 +40,7 @@
             border-radius: 6px;
             cursor: pointer;
         }
-        button:hover {
+        button:active {
             background: #1d4ed8;
         }
         .result {
@@ -49,22 +50,55 @@
             border-radius: 6px;
             font-size: 18px;
         }
+        .quick-btn-group{
+            display:flex;
+            gap:8px;
+            margin-top:8px;
+        }
+        .quick-btn-group button{
+            flex:1;
+            padding:8px 4px;
+            font-size:14px;
+            background:#64748b;
+        }
+        .quick-btn-group button:active{
+            background:#475569;
+        }
     </style>
 </head>
 <body>
     <h2>时间计算器（加分钟）</h2>
     <div class="item">
         <label>起始时间</label>
-        <input type="time" id="startTime" value="08:00">
+        <input type="time" id="startTime">
     </div>
     <div class="item">
         <label>增加分钟数</label>
         <input type="number" id="addMinute" placeholder="例如：90" value="60">
+        <!--快速选择按钮-->
+        <div class="quick-btn-group">
+            <button onclick="setMinute(360)">360分钟</button>
+            <button onclick="setMinute(250)">250分钟</button>
+            <button onclick="setMinute(999)">999分钟</button>
+        </div>
     </div>
     <button onclick="calcTime()">计算结束时间</button>
     <div class="result" id="result"></div>
 
     <script>
+        // 页面加载完成设置为当前本地时间
+        function setNowTime(){
+            const now = new Date();
+            const hh = String(now.getHours()).padStart(2,'0');
+            const mm = String(now.getMinutes()).padStart(2,'0');
+            document.getElementById('startTime').value = `${hh}:${mm}`;
+        }
+
+        //快速填充分钟
+        function setMinute(val){
+            document.getElementById('addMinute').value = val;
+        }
+
         function calcTime() {
             const timeStr = document.getElementById('startTime').value;
             const addMin = Number(document.getElementById('addMinute').value);
@@ -82,6 +116,9 @@
             const endTime = `${fmt(endH)}:${fmt(endM)}`;
             document.getElementById('result').innerText = `结束时间：${endTime}`;
         }
+
+        // 页面打开自动执行
+        window.onload = setNowTime;
     </script>
 </body>
 </html>
