@@ -74,6 +74,19 @@
         .quick-btn-group button:active{
             background:#475569;
         }
+        .short-cut-group{
+            display:flex;
+            flex-wrap:wrap;
+            gap:6px;
+            margin:8px 0 16px;
+        }
+        .short-cut-group button{
+            flex:none;
+            width:auto;
+            padding:6px 10px;
+            font-size:14px;
+            background:#475569;
+        }
     </style>
 </head>
 <body>
@@ -99,23 +112,40 @@
         <div class="result" id="resultAdd"></div>
     </div>
 
-    <!--功能2：两个时间求差值-->
+    <!--功能2：挂机时间计算器（带日期）-->
     <div class="block">
-        <h3>② 两个时间计算相差分钟</h3>
+        <h3>② ⏱️ 挂机时间计算器</h3>
         <div class="item">
-            <label>时间A（默认当前时间）</label>
-            <input type="time" id="timeA">
+            <label>开始时间（默认现在，可修改）</label>
+            <input type="datetime-local" id="idleStart">
         </div>
         <div class="item">
-            <label>时间B（你输入的时间）</label>
-            <input type="time" id="timeB">
+            <label>挂机到（目标结束时间）</label>
+            <input type="datetime-local" id="idleEnd">
         </div>
-        <button onclick="calcDiff()">计算相差分钟</button>
-        <div class="result" id="resultDiff"></div>
+        <div class="short-cut-group">
+            <button onclick="setShortcut('today24')">今天 24:00</button>
+            <button onclick="setShortcut('tom08')">明早 08:00</button>
+            <button onclick="setShortcut('tom12')">明午 12:00</button>
+            <button onclick="setShortcut('tom14')">明天14:00</button>
+        </div>
+        <button onclick="calcIdle()">计算挂机时长</button>
+        <div class="result" id="resultIdle"></div>
     </div>
 
 <script>
-// 获取当前时间字符串
+// 获取本地时间，datetime‑local格式 yyyy‑MM‑ddThh:mm
+function getNowDateTimeLocal(){
+    const d = new Date();
+    const year = d.getFullYear();
+    const mon = String(d.getMonth()+1).padStart(2,'0');
+    const day = String(d.getDate()).padStart(2,'0');
+    const hh = String(d.getHours()).padStart(2,'0');
+    const mm = String(d.getMinutes()).padStart(2,'0');
+    return `${year}-${mon}-${day}T${hh}:${mm}`;
+}
+
+// 获取时分字符串（用于第一个模块）
 function getNowTimeStr(){
     const now = new Date();
     const hh = String(now.getHours()).padStart(2,'0');
@@ -123,10 +153,10 @@ function getNowTimeStr(){
     return `${hh}:${mm}`;
 }
 
-//页面加载填充当前时间
 window.onload = function(){
     document.getElementById('startTime').value = getNowTimeStr();
-    document.getElementById('timeA').value = getNowTimeStr();
+    document.getElementById('idleStart').value = getNowDateTimeLocal();
+    document.getElementById('idleEnd').value = getNowDateTimeLocal();
 };
 
 // ========== 功能1：时间加分钟 ==========
@@ -151,26 +181,62 @@ function calcTime() {
     document.getElementById('resultAdd').innerText = `结束时间：${endTime}`;
 }
 
-// ========== 功能2：时间差计算 ==========
-function toMinutes(timeStr) {
-    const [h, m] = timeStr.split(':').map(Number);
-    return h * 60 + m;
+// ========== 功能2 挂机计算器 ==========
+// 设置快捷结束时间
+function setShortcut(mode){
+    let end = new Date();
+    if(mode === 'today24'){
+        //今天24点 = 次日0点
+        end.setDate(end.getDate()+1);
+        end.setHours(0,0,0,0);
+    }else if(mode === 'tom08'){
+        end.setDate(end.getDate()+1);
+        end.setHours(8,0,0,0);
+    }else if(mode === 'tom12'){
+        end.setDate(end.getDate()+1);
+        end.setHours(12,0,0,0);
+    }else if(mode === 'tom14'){
+        end.setDate(end.getDate()+1);
+        end.setHours(14,0,0,0);
+    }
+    const y = end.getFullYear();
+    const mo = String(end.getMonth()+1).padStart(2,'0');
+    const d = String(end.getDate()).padStart(2,'0');
+    const h = String(end.getHours()).padStart(2,'0');
+    const mi = String(end.getMinutes()).padStart(2,'0');
+    document.getElementById('idleEnd').value = `${y}-${mo}-${d}T${h}:${mi}`;
 }
 
-function calcDiff() {
-    const tA = document.getElementById('timeA').value;
-    const tB = document.getElementById('timeB').value;
-    if (!tA || !tB) {
-        document.getElementById('resultDiff').innerText = "请填写两个时间";
+function calcIdle(){
+    const sVal = document.getElementById('idleStart').value;
+    const eVal = document.getElementById('idleEnd').value;
+    if(!sVal || !eVal){
+        document.getElementById('resultIdle').innerText = "请填写开始与结束时间";
         return;
     }
-    let a = toMinutes(tA);
-    let b = toMinutes(tB);
-    let diff = Math.abs(a - b);
-    const crossDiff = 24*60 - diff;
-    const finalDiff = Math.min(diff, crossDiff);
-    document.getElementById('resultDiff').innerText =
-        `A:${tA} ｜ B:${tB}\n相差：${finalDiff} 分钟`;
+    const start = new Date(sVal);
+    const end = new Date(eVal);
+    if(end <= start){
+        document.getElementById('resultIdle').innerText = "⚠️结束时间不能早于或等于开始时间，请检查！";
+        return;
+    }
+    const diffMs = end.getTime() - start.getTime();
+    const totalMin = Math.floor(diffMs / 60000);
+    const hours = Math.floor(totalMin / 60);
+    const mins = totalMin % 60;
+
+    const fmtDate = (dt)=>{
+        const m = dt.getMonth()+1;
+        const day = dt.getDate();
+        const hh = String(dt.getHours()).padStart(2,'0');
+        const mm = String(dt.getMinutes()).padStart(2,'0');
+        return `${m}月${day}日 ${hh}:${mm}`;
+    };
+
+    const out = `${hours}小时${mins}分
+从 ${fmtDate(start)} 挂到 ${fmtDate(end)}
+共 ${totalMin} 分钟`;
+    document.getElementById('resultIdle').innerText = out;
 }
 
 </script>
