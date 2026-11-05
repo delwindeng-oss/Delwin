@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>时间加法计算器</title>
+    <title>时间工具合集</title>
     <style>
         * {
             box-sizing: border-box;
@@ -11,9 +11,18 @@
         }
         body {
             max-width: 480px;
-            margin: 40px auto;
+            margin: 20px auto;
             padding: 0 20px;
             background:#ffffff;
+        }
+        .block{
+            margin:30px 0;
+            padding:20px;
+            border:1px solid #e5e7eb;
+            border-radius:10px;
+        }
+        h3{
+            margin-top:0;
         }
         .item {
             margin: 16px 0;
@@ -44,11 +53,12 @@
             background: #1d4ed8;
         }
         .result {
-            margin-top: 20px;
+            margin-top: 16px;
             padding: 14px;
             background: #f0f7ff;
             border-radius: 6px;
-            font-size: 18px;
+            font-size: 17px;
+            white-space: pre-wrap;
         }
         .quick-btn-group{
             display:flex;
@@ -67,58 +77,102 @@
     </style>
 </head>
 <body>
-    <h2>时间计算器（加分钟）</h2>
-    <div class="item">
-        <label>起始时间</label>
-        <input type="time" id="startTime">
-    </div>
-    <div class="item">
-        <label>增加分钟数</label>
-        <input type="number" id="addMinute" placeholder="例如：90" value="60">
-        <!--快速选择按钮-->
-        <div class="quick-btn-group">
-            <button onclick="setMinute(360)">360分钟</button>
-            <button onclick="setMinute(250)">250分钟</button>
-            <button onclick="setMinute(999)">999分钟</button>
+    <h2>时间工具合集</h2>
+
+    <!--功能1：时间加分钟-->
+    <div class="block">
+        <h3>① 起始时间 + 分钟 → 结束时间</h3>
+        <div class="item">
+            <label>起始时间</label>
+            <input type="time" id="startTime">
         </div>
+        <div class="item">
+            <label>增加分钟数</label>
+            <input type="number" id="addMinute" placeholder="例如：90" value="60">
+            <div class="quick-btn-group">
+                <button onclick="setMinute(360)">360分钟</button>
+                <button onclick="setMinute(250)">250分钟</button>
+                <button onclick="setMinute(999)">999分钟</button>
+            </div>
+        </div>
+        <button onclick="calcTime()">计算结束时间</button>
+        <div class="result" id="resultAdd"></div>
     </div>
-    <button onclick="calcTime()">计算结束时间</button>
-    <div class="result" id="result"></div>
 
-    <script>
-        // 页面加载完成设置为当前本地时间
-        function setNowTime(){
-            const now = new Date();
-            const hh = String(now.getHours()).padStart(2,'0');
-            const mm = String(now.getMinutes()).padStart(2,'0');
-            document.getElementById('startTime').value = `${hh}:${mm}`;
-        }
+    <!--功能2：两个时间求差值-->
+    <div class="block">
+        <h3>② 两个时间计算相差分钟</h3>
+        <div class="item">
+            <label>时间A（默认当前时间）</label>
+            <input type="time" id="timeA">
+        </div>
+        <div class="item">
+            <label>时间B（你输入的时间）</label>
+            <input type="time" id="timeB">
+        </div>
+        <button onclick="calcDiff()">计算相差分钟</button>
+        <div class="result" id="resultDiff"></div>
+    </div>
 
-        //快速填充分钟
-        function setMinute(val){
-            document.getElementById('addMinute').value = val;
-        }
+<script>
+// 获取当前时间字符串
+function getNowTimeStr(){
+    const now = new Date();
+    const hh = String(now.getHours()).padStart(2,'0');
+    const mm = String(now.getMinutes()).padStart(2,'0');
+    return `${hh}:${mm}`;
+}
 
-        function calcTime() {
-            const timeStr = document.getElementById('startTime').value;
-            const addMin = Number(document.getElementById('addMinute').value);
-            if (!timeStr || isNaN(addMin)) {
-                document.getElementById('result').innerText = "请输入正确的时间和分钟";
-                return;
-            }
-            const [h, m] = timeStr.split(':').map(Number);
-            let total = h * 60 + m + addMin;
-            // 超过24小时自动取模
-            total = total % (24 * 60);
-            const endH = Math.floor(total / 60);
-            const endM = total % 60;
-            const fmt = (n) => String(n).padStart(2, '0');
-            const endTime = `${fmt(endH)}:${fmt(endM)}`;
-            document.getElementById('result').innerText = `结束时间：${endTime}`;
-        }
+//页面加载填充当前时间
+window.onload = function(){
+    document.getElementById('startTime').value = getNowTimeStr();
+    document.getElementById('timeA').value = getNowTimeStr();
+};
 
-        // 页面打开自动执行
-        window.onload = setNowTime;
-    </script>
+// ========== 功能1：时间加分钟 ==========
+function setMinute(val){
+    document.getElementById('addMinute').value = val;
+}
+
+function calcTime() {
+    const timeStr = document.getElementById('startTime').value;
+    const addMin = Number(document.getElementById('addMinute').value);
+    if (!timeStr || isNaN(addMin)) {
+        document.getElementById('resultAdd').innerText = "请输入正确的时间和分钟";
+        return;
+    }
+    const [h, m] = timeStr.split(':').map(Number);
+    let total = h * 60 + m + addMin;
+    total = total % (24 * 60);
+    const endH = Math.floor(total / 60);
+    const endM = total % 60;
+    const fmt = (n) => String(n).padStart(2, '0');
+    const endTime = `${fmt(endH)}:${fmt(endM)}`;
+    document.getElementById('resultAdd').innerText = `结束时间：${endTime}`;
+}
+
+// ========== 功能2：时间差计算 ==========
+function toMinutes(timeStr) {
+    const [h, m] = timeStr.split(':').map(Number);
+    return h * 60 + m;
+}
+
+function calcDiff() {
+    const tA = document.getElementById('timeA').value;
+    const tB = document.getElementById('timeB').value;
+    if (!tA || !tB) {
+        document.getElementById('resultDiff').innerText = "请填写两个时间";
+        return;
+    }
+    let a = toMinutes(tA);
+    let b = toMinutes(tB);
+    let diff = Math.abs(a - b);
+    const crossDiff = 24*60 - diff;
+    const finalDiff = Math.min(diff, crossDiff);
+    document.getElementById('resultDiff').innerText =
+        `A:${tA} ｜ B:${tB}\n相差：${finalDiff} 分钟`;
+}
+
+</script>
 </body>
 </html>
