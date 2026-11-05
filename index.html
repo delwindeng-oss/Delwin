@@ -125,7 +125,7 @@
         </div>
         <div class="short-cut-group">
             <button onclick="setShortcut('today24')">今天 24:00</button>
-            <button onclick="setShortcut('tom08')">明早 08:00</button>
+            <button onclick="setShortcut('tom0730')">明早 07:30</button>
             <button onclick="setShortcut('tom12')">明午 12:00</button>
             <button onclick="setShortcut('tom14')">明天14:00</button>
         </div>
@@ -189,9 +189,9 @@ function setShortcut(mode){
         //今天24点 = 次日0点
         end.setDate(end.getDate()+1);
         end.setHours(0,0,0,0);
-    }else if(mode === 'tom08'){
+    }else if(mode === 'tom0730'){
         end.setDate(end.getDate()+1);
-        end.setHours(8,0,0,0);
+        end.setHours(7,30,0,0);
     }else if(mode === 'tom12'){
         end.setDate(end.getDate()+1);
         end.setHours(12,0,0,0);
