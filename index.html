@@ -46,22 +46,34 @@
             display: flex;
             flex-wrap: wrap;
             gap: 8px;
-            margin:10px 0;
+            margin:10px 0 14px 0;
         }
-        button {
+        button.quick {
             padding: 8px 12px;
             border: none;
-            background: #4080ff;
+            background: #6b7280;
             color: white;
             border-radius: 6px;
             cursor: pointer;
             font-size:14px;
         }
-        button.quick {
-            background:#6699ff;
+        button.quick:hover {
+            background:#4b5563;
         }
-        button:hover {
-            background:#2b6ed9;
+        /* 主蓝色长条按钮，和截图样式对齐 */
+        button.primary {
+            width: 100%;
+            padding: 14px 12px;
+            border: none;
+            border-radius: 10px;
+            background: #2563eb;
+            color: #ffffff;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        button.primary:hover {
+            background: #1d4ed8;
         }
         .result {
             margin-top:12px;
@@ -75,33 +87,33 @@
 <body>
     <!-- 功能1：起始时间 + 分钟 求结束时间 -->
     <div class="card">
-        <h3>✅ 时间加法（加分钟）</h3>
+        <h3>① 起始时间 + 分钟 → 结束时间</h3>
         <div class="item">
             <label>起始时间</label>
             <input type="datetime-local" id="startTime">
         </div>
         <div class="item">
-            <label>增加分钟</label>
+            <label>增加分钟数</label>
             <input type="number" id="addMin" placeholder="输入分钟">
         </div>
         <div class="btn-group">
-            <button class="quick" onclick="setMin(360)">+360分钟</button>
-            <button class="quick" onclick="setMin(250)">+250分钟</button>
-            <button class="quick" onclick="setMin(999)">+999分钟</button>
-            <button onclick="calcAdd()">计算</button>
+            <button class="quick" onclick="setMin(360)">360分钟</button>
+            <button class="quick" onclick="setMin(250)">250分钟</button>
+            <button class="quick" onclick="setMin(999)">999分钟</button>
         </div>
+        <button class="primary" onclick="calcAdd()">计算结束时间</button>
         <div class="result" id="addResult"></div>
     </div>
 
     <!-- 功能2：挂机时长计算器 -->
     <div class="card">
-        <h3>⏱️ 挂机时长计算</h3>
+        <h3>② ⏱️ 挂机时间计算器</h3>
         <div class="item">
-            <label>开始时间</label>
+            <label>开始时间（默认现在，可修改）</label>
             <input type="datetime-local" id="idleStart">
         </div>
         <div class="item">
-            <label>结束时间</label>
+            <label>挂机到（目标结束时间）</label>
             <input type="datetime-local" id="idleEnd">
         </div>
         <div class="btn-group">
@@ -109,8 +121,8 @@
             <button class="quick" onclick="setIdleEndNight19()">今晚19:00</button>
             <button class="quick" onclick="setIdleEndTom730()">明早 07:30</button>
             <button class="quick" onclick="setIdleEndTom14()">明天14:00</button>
-            <button onclick="calcIdle()">计算时长</button>
         </div>
+        <button class="primary" onclick="calcIdle()">计算挂机时长</button>
         <div class="result" id="idleResult"></div>
     </div>
 
