@@ -2,7 +2,7 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>时间工具合集</title>
     <style>
         * {
@@ -10,27 +10,30 @@
             font-family: system-ui, sans-serif;
         }
         body {
-            max-width: 480px;
-            margin: 20px auto;
+            max-width: 520px;
+            margin: 30px auto;
             padding: 0 20px;
-            background:#ffffff;
+            background-color: #f7f8fa;
         }
-        .block{
-            margin:30px 0;
-            padding:20px;
-            border:1px solid #e5e7eb;
-            border-radius:10px;
+        .card {
+            background: #fff;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
         }
-        h3{
-            margin-top:0;
+        h3 {
+            margin-top: 0;
+            color: #222;
         }
         .item {
-            margin: 16px 0;
+            margin: 14px 0;
         }
         label {
             display: block;
-            margin-bottom: 6px;
+            margin-bottom: 5px;
             font-weight: 500;
+            font-size: 14px;
         }
         input {
             width: 100%;
@@ -39,206 +42,160 @@
             border: 1px solid #ccc;
             border-radius: 6px;
         }
+        .btn-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin:10px 0;
+        }
         button {
-            width: 100%;
-            padding: 12px;
+            padding: 8px 12px;
             border: none;
-            background: #2563eb;
+            background: #4080ff;
             color: white;
-            font-size: 16px;
             border-radius: 6px;
             cursor: pointer;
+            font-size:14px;
         }
-        button:active {
-            background: #1d4ed8;
+        button.quick {
+            background:#6699ff;
+        }
+        button:hover {
+            background:#2b6ed9;
         }
         .result {
-            margin-top: 16px;
-            padding: 14px;
-            background: #f0f7ff;
-            border-radius: 6px;
-            font-size: 17px;
-            white-space: pre-wrap;
-        }
-        .quick-btn-group{
-            display:flex;
-            gap:8px;
-            margin-top:8px;
-        }
-        .quick-btn-group button{
-            flex:1;
-            padding:8px 4px;
-            font-size:14px;
-            background:#64748b;
-        }
-        .quick-btn-group button:active{
-            background:#475569;
-        }
-        .short-cut-group{
-            display:flex;
-            flex-wrap:wrap;
-            gap:6px;
-            margin:8px 0 16px;
-        }
-        .short-cut-group button{
-            flex:none;
-            width:auto;
-            padding:6px 10px;
-            font-size:14px;
-            background:#475569;
+            margin-top:12px;
+            padding:10px;
+            background:#eef6ff;
+            border-radius:6px;
+            font-size:16px;
         }
     </style>
 </head>
 <body>
-    <h2>时间工具合集</h2>
-
-    <!--功能1：时间加分钟-->
-    <div class="block">
-        <h3>① 起始时间 + 分钟 → 结束时间</h3>
+    <!-- 功能1：起始时间 + 分钟 求结束时间 -->
+    <div class="card">
+        <h3>✅ 时间加法（加分钟）</h3>
         <div class="item">
             <label>起始时间</label>
-            <input type="time" id="startTime">
+            <input type="datetime-local" id="startTime">
         </div>
         <div class="item">
-            <label>增加分钟数</label>
-            <input type="number" id="addMinute" placeholder="例如：90" value="60">
-            <div class="quick-btn-group">
-                <button onclick="setMinute(360)">360分钟</button>
-                <button onclick="setMinute(250)">250分钟</button>
-                <button onclick="setMinute(999)">999分钟</button>
-            </div>
+            <label>增加分钟</label>
+            <input type="number" id="addMin" placeholder="输入分钟">
         </div>
-        <button onclick="calcTime()">计算结束时间</button>
-        <div class="result" id="resultAdd"></div>
+        <div class="btn-group">
+            <button class="quick" onclick="setMin(360)">+360分钟</button>
+            <button class="quick" onclick="setMin(250)">+250分钟</button>
+            <button class="quick" onclick="setMin(999)">+999分钟</button>
+            <button onclick="calcAdd()">计算</button>
+        </div>
+        <div class="result" id="addResult"></div>
     </div>
 
-    <!--功能2：挂机时间计算器（带日期）-->
-    <div class="block">
-        <h3>② ⏱️ 挂机时间计算器</h3>
+    <!-- 功能2：挂机时长计算器 -->
+    <div class="card">
+        <h3>⏱️ 挂机时长计算</h3>
         <div class="item">
-            <label>开始时间（默认现在，可修改）</label>
+            <label>开始时间</label>
             <input type="datetime-local" id="idleStart">
         </div>
         <div class="item">
-            <label>挂机到（目标结束时间）</label>
+            <label>结束时间</label>
             <input type="datetime-local" id="idleEnd">
         </div>
-        <div class="short-cut-group">
-            <button onclick="setShortcut('today24')">今天 24:00</button>
-            <button onclick="setShortcut('tom0730')">明早 07:30</button>
-            <button onclick="setShortcut('tom12')">明午 12:00</button>
-            <button onclick="setShortcut('tom14')">明天14:00</button>
+        <div class="btn-group">
+            <button class="quick" onclick="setIdleEndNow14()">今天14:00</button>
+            <button class="quick" onclick="setIdleEndNight19()">今晚19:00</button>
+            <button class="quick" onclick="setIdleEndTom730()">明早 07:30</button>
+            <button class="quick" onclick="setIdleEndTom14()">明天14:00</button>
+            <button onclick="calcIdle()">计算时长</button>
         </div>
-        <button onclick="calcIdle()">计算挂机时长</button>
-        <div class="result" id="resultIdle"></div>
+        <div class="result" id="idleResult"></div>
     </div>
 
 <script>
-// 获取本地时间，datetime‑local格式 yyyy‑MM‑ddThh:mm
-function getNowDateTimeLocal(){
+// 页面加载默认当前时间
+function getLocalDatetime() {
     const d = new Date();
-    const year = d.getFullYear();
-    const mon = String(d.getMonth()+1).padStart(2,'0');
-    const day = String(d.getDate()).padStart(2,'0');
-    const hh = String(d.getHours()).padStart(2,'0');
-    const mm = String(d.getMinutes()).padStart(2,'0');
-    return `${year}-${mon}-${day}T${hh}:${mm}`;
+    const offset = d.getTimezoneOffset() * 60000;
+    const localISOTime = (new Date(d - offset)).toISOString().slice(0, 16);
+    return localISOTime;
 }
+document.getElementById('startTime').value = getLocalDatetime();
+document.getElementById('idleStart').value = getLocalDatetime();
 
-// 获取时分字符串（用于第一个模块）
-function getNowTimeStr(){
-    const now = new Date();
-    const hh = String(now.getHours()).padStart(2,'0');
-    const mm = String(now.getMinutes()).padStart(2,'0');
-    return `${hh}:${mm}`;
+// 加分钟工具
+function setMin(v) {
+    document.getElementById('addMin').value = v;
 }
-
-window.onload = function(){
-    document.getElementById('startTime').value = getNowTimeStr();
-    document.getElementById('idleStart').value = getNowDateTimeLocal();
-    document.getElementById('idleEnd').value = getNowDateTimeLocal();
-};
-
-// ========== 功能1：时间加分钟 ==========
-function setMinute(val){
-    document.getElementById('addMinute').value = val;
-}
-
-function calcTime() {
-    const timeStr = document.getElementById('startTime').value;
-    const addMin = Number(document.getElementById('addMinute').value);
-    if (!timeStr || isNaN(addMin)) {
-        document.getElementById('resultAdd').innerText = "请输入正确的时间和分钟";
+function calcAdd() {
+    const st = document.getElementById('startTime').value;
+    const m = Number(document.getElementById('addMin').value);
+    if(!st || isNaN(m)){
+        document.getElementById('addResult').innerText="请填写时间和分钟";
         return;
     }
-    const [h, m] = timeStr.split(':').map(Number);
-    let total = h * 60 + m + addMin;
-    total = total % (24 * 60);
-    const endH = Math.floor(total / 60);
-    const endM = total % 60;
-    const fmt = (n) => String(n).padStart(2, '0');
-    const endTime = `${fmt(endH)}:${fmt(endM)}`;
-    document.getElementById('resultAdd').innerText = `结束时间：${endTime}`;
+    const t = new Date(st);
+    t.setMinutes(t.getMinutes() + m);
+    document.getElementById('addResult').innerText = "结果：" + formatDT(t);
 }
 
-// ========== 功能2 挂机计算器 ==========
-// 设置快捷结束时间
-function setShortcut(mode){
-    let end = new Date();
-    if(mode === 'today24'){
-        //今天24点 = 次日0点
-        end.setDate(end.getDate()+1);
-        end.setHours(0,0,0,0);
-    }else if(mode === 'tom0730'){
-        end.setDate(end.getDate()+1);
-        end.setHours(7,30,0,0);
-    }else if(mode === 'tom12'){
-        end.setDate(end.getDate()+1);
-        end.setHours(12,0,0,0);
-    }else if(mode === 'tom14'){
-        end.setDate(end.getDate()+1);
-        end.setHours(14,0,0,0);
-    }
-    const y = end.getFullYear();
-    const mo = String(end.getMonth()+1).padStart(2,'0');
-    const d = String(end.getDate()).padStart(2,'0');
-    const h = String(end.getHours()).padStart(2,'0');
-    const mi = String(end.getMinutes()).padStart(2,'0');
-    document.getElementById('idleEnd').value = `${y}-${mo}-${d}T${h}:${mi}`;
-}
-
+// 挂机时长
 function calcIdle(){
-    const sVal = document.getElementById('idleStart').value;
-    const eVal = document.getElementById('idleEnd').value;
-    if(!sVal || !eVal){
-        document.getElementById('resultIdle').innerText = "请填写开始与结束时间";
+    const s = new Date(document.getElementById('idleStart').value);
+    const e = new Date(document.getElementById('idleEnd').value);
+    if(isNaN(s.getTime()) || isNaN(e.getTime())){
+        document.getElementById('idleResult').innerText="时间不合法";
         return;
     }
-    const start = new Date(sVal);
-    const end = new Date(eVal);
-    if(end <= start){
-        document.getElementById('resultIdle').innerText = "⚠️结束时间不能早于或等于开始时间，请检查！";
-        return;
-    }
-    const diffMs = end.getTime() - start.getTime();
-    const totalMin = Math.floor(diffMs / 60000);
-    const hours = Math.floor(totalMin / 60);
-    const mins = totalMin % 60;
-
-    const fmtDate = (dt)=>{
-        const m = dt.getMonth()+1;
-        const day = dt.getDate();
-        const hh = String(dt.getHours()).padStart(2,'0');
-        const mm = String(dt.getMinutes()).padStart(2,'0');
-        return `${m}月${day}日 ${hh}:${mm}`;
-    };
-
-    const out = `${hours}小时${mins}分
-从 ${fmtDate(start)} 挂到 ${fmtDate(end)}
-共 ${totalMin} 分钟`;
-    document.getElementById('resultIdle').innerText = out;
+    const diff = (e - s)/60000;
+    const h = Math.floor(diff / 60);
+    const min = Math.round(diff % 60);
+    document.getElementById('idleResult').innerText = `相差：${h}小时 ${min}分钟（合计 ${diff.toFixed(1)} 分钟）`;
 }
 
+// ====== 快捷按钮 ======
+// 今天14:00
+function setIdleEndNow14(){
+    const d = new Date();
+    d.setHours(14,0,0,0);
+    document.getElementById('idleEnd').value = toDTLocal(d);
+}
+// 今晚19:00
+function setIdleEndNight19(){
+    const d = new Date();
+    d.setHours(19,0,0,0);
+    document.getElementById('idleEnd').value = toDTLocal(d);
+}
+// 明早 07:30
+function setIdleEndTom730(){
+    const d = new Date();
+    d.setDate(d.getDate()+1);
+    d.setHours(7,30,0,0);
+    document.getElementById('idleEnd').value = toDTLocal(d);
+}
+// 明天14:00
+function setIdleEndTom14(){
+    const d = new Date();
+    d.setDate(d.getDate()+1);
+    d.setHours(14,0,0,0);
+    document.getElementById('idleEnd').value = toDTLocal(d);
+}
+
+// 辅助格式化
+function formatDT(date){
+    const y = date.getFullYear();
+    const M = String(date.getMonth()+1).padStart(2,'0');
+    const day = String(date.getDate()).padStart(2,'0');
+    const h = String(date.getHours()).padStart(2,'0');
+    const m = String(date.getMinutes()).padStart(2,'0');
+    return `${y}-${M}-${day} ${h}:${m}`;
+}
+function toDTLocal(date){
+    const offset = date.getTimezoneOffset() * 60000;
+    return (new Date(date - offset)).toISOString().slice(0,16);
+}
 </script>
 </body>
 </html>
